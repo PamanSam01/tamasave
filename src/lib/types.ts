@@ -50,6 +50,8 @@ export type SchedulerTaskPayload = {
 export type RitualIdentity = {
   username: `${string}.ritual`;
   pfp?: string;
+  xUsername?: string;
+  discordUsername?: string;
   memberSince: string;
   walletAddress: string;
 };

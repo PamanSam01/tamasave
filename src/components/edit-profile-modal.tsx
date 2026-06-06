@@ -12,28 +12,35 @@ export function EditProfileModal({ open, onOpenChange }: { open: boolean; onOpen
   const identity = useRitualIdentity();
   const [username, setUsername] = useState("");
   const [pfp, setPfp] = useState("");
+  const [xUsername, setXUsername] = useState("");
+  const [discordUsername, setDiscordUsername] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const { writeContractAsync } = useWriteContract();
 
   const onchainUsername = identity?.username;
   const onchainPfp = identity?.pfp;
+  const onchainX = identity?.xUsername;
+  const onchainDiscord = identity?.discordUsername;
 
   // Initialize from identity only when opened or when onchain data changes
   useEffect(() => {
     if (open) {
       setUsername(onchainUsername?.replace(".ritual", "") || "");
       setPfp(onchainPfp || "");
+      setXUsername(onchainX || "");
+      setDiscordUsername(onchainDiscord || "");
     }
-  }, [open, onchainUsername, onchainPfp]);
+  }, [open, onchainUsername, onchainPfp, onchainX, onchainDiscord]);
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
+      const profileData = JSON.stringify({ image: pfp, x: xUsername, discord: discordUsername });
       await writeContractAsync({
         address: ritualIdentityRegistryAddress,
         abi: ritualIdentityRegistryAbi,
         functionName: "updateProfile",
-        args: [`${username}.ritual`, pfp]
+        args: [`${username}.ritual`, profileData]
       });
       // console.log("Profile updated successfully onchain!");
       onOpenChange(false);
@@ -53,7 +60,7 @@ export function EditProfileModal({ open, onOpenChange }: { open: boolean; onOpen
         <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <Dialog.Content className="fixed left-[50%] top-[50%] z-50 w-full max-w-md translate-x-[-50%] translate-y-[-50%] rounded-lg border-2 border-ink bg-card p-6 shadow-pixel-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="font-pixel text-xl">Edit Profile</h2>
+            <Dialog.Title className="font-pixel text-xl">Edit Profile</Dialog.Title>
             <Dialog.Close asChild>
               <button className="rounded hover:bg-ink/10 p-1">
                 <X className="h-5 w-5" />
@@ -73,7 +80,35 @@ export function EditProfileModal({ open, onOpenChange }: { open: boolean; onOpen
                     if (file) {
                       const reader = new FileReader();
                       reader.onloadend = () => {
-                        setPfp(reader.result as string);
+                        const img = new Image();
+                        img.onload = () => {
+                          const canvas = document.createElement("canvas");
+                          const ctx = canvas.getContext("2d");
+                          
+                          const MAX_SIZE = 120;
+                          let width = img.width;
+                          let height = img.height;
+                          
+                          if (width > height) {
+                            if (width > MAX_SIZE) {
+                              height *= MAX_SIZE / width;
+                              width = MAX_SIZE;
+                            }
+                          } else {
+                            if (height > MAX_SIZE) {
+                              width *= MAX_SIZE / height;
+                              height = MAX_SIZE;
+                            }
+                          }
+                          
+                          canvas.width = width;
+                          canvas.height = height;
+                          ctx?.drawImage(img, 0, 0, width, height);
+                          
+                          const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
+                          setPfp(compressedBase64);
+                        };
+                        img.src = reader.result as string;
                       };
                       reader.readAsDataURL(file);
                     }
@@ -106,6 +141,38 @@ export function EditProfileModal({ open, onOpenChange }: { open: boolean; onOpen
                 </span>
               </div>
               <p className="mt-1 text-xs font-bold text-ink/50">Note: Updating onchain ENS/Ritual names will require a transaction.</p>
+            </div>
+
+            <div>
+              <label className="mb-1 block text-xs font-bold uppercase text-ink/70">X (Twitter) Username</label>
+              <div className="flex w-full items-center overflow-hidden rounded border-2 border-ink bg-shell focus-within:ring-2 focus-within:ring-ink">
+                <span className="border-r-2 border-ink bg-ink/5 px-3 py-2 font-pixel text-lg text-ink/60">
+                  @
+                </span>
+                <input
+                  type="text"
+                  value={xUsername}
+                  onChange={(e) => setXUsername(e.target.value)}
+                  placeholder="elonmusk"
+                  className="flex-1 bg-transparent px-3 py-2 font-pixel text-lg outline-none"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="mb-1 block text-xs font-bold uppercase text-ink/70">Discord Username</label>
+              <div className="flex w-full items-center overflow-hidden rounded border-2 border-ink bg-shell focus-within:ring-2 focus-within:ring-ink">
+                <span className="border-r-2 border-ink bg-ink/5 px-3 py-2 font-pixel text-lg text-ink/60">
+                  #
+                </span>
+                <input
+                  type="text"
+                  value={discordUsername}
+                  onChange={(e) => setDiscordUsername(e.target.value)}
+                  placeholder="wumpus"
+                  className="flex-1 bg-transparent px-3 py-2 font-pixel text-lg outline-none"
+                />
+              </div>
             </div>
           </div>
 

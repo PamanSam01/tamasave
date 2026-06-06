@@ -56,6 +56,8 @@ export function ClaimUsernameModal({
       storeIdentity(identity);
       onMinted(identity);
       onOpenChange(false);
+      // Force reload to update the useReadContract cache across the app
+      setTimeout(() => window.location.reload(), 1500);
     }
   }, [isConfirmed, address, username, onMinted, onOpenChange]);
 

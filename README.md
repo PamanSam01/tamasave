@@ -43,16 +43,6 @@ TamaSave is built for the modern Web3 user. It features:
 
 ---
 
-## 📸 Screenshots
-
-*(Placeholders for future screenshots)*
-
-| Dashboard Overview | Pet Evolution | Mobile Navigation | Quick Send Widget |
-|:---:|:---:|:---:|:---:|
-| `[Screenshot 1]` | `[Screenshot 2]` | `[Screenshot 3]` | `[Screenshot 4]` |
-
----
-
 ## 🚀 Quick Start & Installation
 
 ### Prerequisites

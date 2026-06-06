@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 47 67% 89%;
+  --foreground: 160 22% 16%;
+  --card: 48 100% 96%;
+  --card-foreground: 160 22% 16%;
+  --primary: 154 47% 51%;
+  --primary-foreground: 160 22% 16%;
+  --secondary: 199 100% 83%;
+  --secondary-foreground: 160 22% 16%;
+  --muted: 84 41% 80%;
+  --muted-foreground: 158 16% 31%;
+  --accent: 16 100% 82%;
+  --accent-foreground: 160 22% 16%;
+  --border: 160 22% 16%;
+  --input: 160 22% 16%;
+  --ring: 154 47% 45%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    linear-gradient(90deg, rgba(32, 49, 43, 0.05) 1px, transparent 1px),
+    linear-gradient(rgba(32, 49, 43, 0.05) 1px, transparent 1px),
+    #f7f0cf;
+  background-size: 24px 24px;
+  color: #20312b;
+}
+
+button,
+a,
+input,
+select {
+  font: inherit;
+}
+
+.pixel-border {
+  border: 3px solid #20312b;
+  box-shadow: 4px 4px 0 #20312b;
+}
+
+.screen-grid {
+  background:
+    linear-gradient(rgba(32, 49, 43, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(32, 49, 43, 0.08) 1px, transparent 1px),
+    #c7e7b1;
+  background-size: 14px 14px;
+}
+
+.pixel-art {
+  image-rendering: pixelated;
+}
+
+.scanlines {
+  position: relative;
+}
+
+.scanlines::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(32, 49, 43, 0.08),
+    rgba(32, 49, 43, 0.08) 1px,
+    transparent 1px,
+    transparent 5px
+  );
+  mix-blend-mode: multiply;
+}

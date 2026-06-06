@@ -2,7 +2,7 @@
 
 import { QueryClient } from "@tanstack/react-query";
 import { createConfig, http } from "wagmi";
-import { walletConnect, injected } from "wagmi/connectors";
+import { injected } from "wagmi/connectors";
 import { defineChain } from "viem";
 
 export const ritualChain = defineChain({
@@ -30,10 +30,7 @@ export const ritualChain = defineChain({
 export const wagmiConfig = createConfig({
   chains: [ritualChain],
   connectors: [
-    injected(),
-    walletConnect({
-      projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "demo"
-    })
+    injected()
   ],
   transports: {
     [ritualChain.id]: http()
